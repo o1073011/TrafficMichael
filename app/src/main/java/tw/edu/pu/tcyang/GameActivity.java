@@ -13,6 +13,7 @@ public class GameActivity extends AppCompatActivity {
 
     GameSurfaceView GameSV;
     Handler handler;
+    float LastX, CurrentX;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class GameActivity extends AppCompatActivity {
         GameSV.SetLightSec(it.getIntExtra("SecG",0),
                 it.getIntExtra("SecY",0),
                 it.getIntExtra("SecR",0));
-        
+
         handler= new Handler();
     }
 
@@ -49,12 +50,24 @@ public class GameActivity extends AppCompatActivity {
     //利用手指觸控，控制小男孩走路
     public boolean onTouchEvent (MotionEvent event){
         if (event.getAction() == MotionEvent.ACTION_DOWN){
-            GameSV.BoyMoving = true;
+            //GameSV.BoyMoving = true;
+            LastX = event.getX();
             handler.post(runnable);
         }
         else if (event.getAction() == MotionEvent.ACTION_UP){
             GameSV.BoyMoving =  false;
             handler.removeCallbacks(runnable);  //銷毀執行緒
+        }
+        else if(event.getAction() == MotionEvent.ACTION_MOVE)
+        {
+            CurrentX = event.getX();
+            if (CurrentX>LastX){
+                GameSV.BoyMoving = true;
+            }
+            else{
+                GameSV.BoyMoving =  false;
+            }
+            LastX = CurrentX;
         }
         return true;
     }
